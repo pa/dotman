@@ -14,13 +14,8 @@ import (
 // initCmd represents the init command
 var initCmd = &cobra.Command{
 	Use:   "init",
-	Short: "clones dotfile remote repo locally and installs plugins that you specified",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "clones dotfiles repo and installs plugins that you specified in cofig file",
+	Long:  `clones dotfiles repo and installs plugins that you specified in cofig file.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		Params := utils.PromptParams{
 			Label:    "git repo url",
