@@ -3,6 +3,7 @@ package utils
 import (
 	"errors"
 	"fmt"
+	"os"
 	"os/exec"
 )
 
@@ -20,9 +21,6 @@ func GitCommand(args ...string) (*exec.Cmd, error) {
 	if err != nil {
 		if errors.Is(err, exec.ErrNotFound) {
 			programName := "git"
-			// if runtime.GOOS == "windows" {
-			//  programName = "Git for Windows"
-			// }
 			return nil, &NotInstalled{
 				message: fmt.Sprintf("unable to find git executable in PATH; please install %s before retrying", programName),
 				error:   err,
@@ -31,4 +29,19 @@ func GitCommand(args ...string) (*exec.Cmd, error) {
 		return nil, err
 	}
 	return exec.Command(gitExe, args...), nil
+}
+
+func GitCommandRun(args ...string) string {
+	gitCmd, gitCmdErr := GitCommand(args...)
+	if gitCmdErr != nil {
+		fmt.Print(gitCmdErr)
+	}
+
+	out, err := gitCmd.Output()
+	if err != nil {
+		fmt.Print(err)
+		os.Exit(1)
+	}
+	return string(out)
+
 }

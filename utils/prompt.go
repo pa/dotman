@@ -8,15 +8,15 @@ import (
 	"github.com/manifoldco/promptui"
 )
 
-type promptParams struct {
-	label    string
-	errorMsg string
+type PromptParams struct {
+	Label    string
+	ErrorMsg string
 }
 
-func PromptGetInput(params promptParams) string {
+func PromptGetInput(params PromptParams) string {
 	validate := func(input string) error {
 		if len(input) <= 0 {
-			return errors.New(params.errorMsg)
+			return errors.New(params.ErrorMsg)
 		}
 		return nil
 	}
@@ -29,7 +29,7 @@ func PromptGetInput(params promptParams) string {
 	}
 
 	prompt := promptui.Prompt{
-		Label:     params.label,
+		Label:     params.Label,
 		Templates: templates,
 		Validate:  validate,
 	}

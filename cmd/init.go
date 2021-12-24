@@ -2,14 +2,19 @@ package cmd
 
 import (
 	"fmt"
+	"os"
+	"path/filepath"
+	"strings"
 
+	"github.com/pa/dotman/utils"
 	"github.com/spf13/cobra"
+	"github.com/tcnksm/go-gitconfig"
 )
 
 // initCmd represents the init command
 var initCmd = &cobra.Command{
 	Use:   "init",
-	Short: "A brief description of your command",
+	Short: "clones dotfile remote repo locally and installs plugins that you specified",
 	Long: `A longer description that spans multiple lines and likely contains examples
 and usage of using your command. For example:
 
@@ -17,7 +22,72 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("init called")
+		Params := utils.PromptParams{
+			Label:    "git repo url",
+			ErrorMsg: "Please provide git repo url",
+		}
+
+		DotFilesRepoUrl := utils.PromptGetInput(Params)
+
+		// Clone dotfiles bare repo
+		utils.GitCommandRun(utils.GitDir,
+			utils.WorkTree,
+			"clone",
+			"--bare",
+			"--no-checkout",
+			"--depth",
+			"1",
+			DotFilesRepoUrl,
+			utils.DotmanDir,
+		)
+
+		// set git config username
+		utils.GitCommandRun(utils.GitDir,
+			utils.WorkTree,
+			"config",
+			"user.name",
+			utils.GitUserName,
+		)
+
+		// set showUntrackedFiles to no
+		utils.GitCommandRun(utils.GitDir,
+			utils.WorkTree,
+			"config",
+			"--local",
+			"status.showUntrackedFiles",
+			"no",
+		)
+
+		// get branch name
+		DefaultBranchName, _ := gitconfig.Entire("init.defaultbranch")
+
+		// git list files in remote repo
+		LsFiles := utils.GitCommandRun(utils.GitDir,
+			"ls-tree",
+			"-r",
+			DefaultBranchName,
+			"--name-only",
+		)
+
+		// convert to Array
+		LsFilesArray := strings.Fields(LsFiles)
+
+		// backup existing dotfiles
+		if len(LsFilesArray) >= 0 {
+			for _, filePath := range LsFilesArray {
+				os.MkdirAll(utils.DotfileBackupDir+"/"+filepath.Dir(filePath), 0755)
+				os.Rename(utils.HomeDir+"/"+filePath, utils.DotfileBackupDir+"/"+filePath)
+			}
+		}
+
+		// git checkout dotfiles
+		utils.GitCommandRun(utils.GitDir,
+			utils.WorkTree,
+			"checkout",
+		)
+
+		fmt.Print("Successfully Initialized")
+
 	},
 }
 

@@ -1,12 +1,13 @@
 package utils
 
 const (
-	dotmanDirName         = ".dotman"
-	dotFilesBackupDirName = "dotfiles-backup"
+	DotmanDirName         = ".dotman"
+	DotFilesBackupDirName = "dotfiles-backup"
+	GitUserName           = "dotman"
 )
 
-var homeDir string = GetHomeDir()
-var dotmanDir string = homeDir + "/" + dotmanDirName
-var gitDir string = "--git-dir=" + dotmanDir
-var workTree string = "--work-tree=" + homeDir
-var dotfileBackupDir = dotmanDir + "/" + dotFilesBackupDirName
+var HomeDir string = GetHomeDir()
+var DotmanDir string = HomeDir + "/" + DotmanDirName
+var GitDir string = "--git-dir=" + DotmanDir
+var WorkTree string = "--work-tree=" + HomeDir
+var DotfileBackupDir = DotmanDir + "/" + DotFilesBackupDirName
