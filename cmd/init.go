@@ -57,12 +57,18 @@ var initCmd = &cobra.Command{
 		DefaultBranchName, _ := gitconfig.Entire("init.defaultbranch")
 
 		// git list files in remote repo
-		LsFiles := utils.GitCommandRun(utils.GitDir,
+		gitCmd, _ := utils.GitCommand(utils.GitDir,
 			"ls-tree",
 			"-r",
 			DefaultBranchName,
 			"--name-only",
 		)
+		out, err := gitCmd.Output()
+		if err != nil {
+			fmt.Print(err)
+			os.Exit(1)
+		}
+		LsFiles := string(out)
 
 		// convert to Array
 		LsFilesArray := strings.Fields(LsFiles)

@@ -31,25 +31,14 @@ func GitCommand(args ...string) (*exec.Cmd, error) {
 	return exec.Command(gitExe, args...), nil
 }
 
-func GitCommandRun(args ...string) string {
+func GitCommandRun(args ...string) {
 	gitCmd, gitCmdErr := GitCommand(args...)
 	if gitCmdErr != nil {
 		fmt.Print(gitCmdErr)
 	}
-
-	if EnableInteractiveCommand {
-		// for interactive command line
-		gitCmd.Stdout = os.Stdout
-		gitCmd.Stdin = os.Stdin
-		gitCmd.Stderr = os.Stderr
-		_ = gitCmd.Run()
-		return ""
-	} else {
-		out, err := gitCmd.Output()
-		if err != nil {
-			fmt.Print(err)
-			os.Exit(1)
-		}
-		return string(out)
-	}
+	// for interactive command line
+	gitCmd.Stdout = os.Stdout
+	gitCmd.Stdin = os.Stdin
+	gitCmd.Stderr = os.Stderr
+	_ = gitCmd.Run()
 }
