@@ -37,11 +37,19 @@ func GitCommandRun(args ...string) string {
 		fmt.Print(gitCmdErr)
 	}
 
-	out, err := gitCmd.Output()
-	if err != nil {
-		fmt.Print(err)
-		os.Exit(1)
+	if EnableInteractiveCommand {
+		// for interactive command line
+		gitCmd.Stdout = os.Stdout
+		gitCmd.Stdin = os.Stdin
+		gitCmd.Stderr = os.Stderr
+		_ = gitCmd.Run()
+		return ""
+	} else {
+		out, err := gitCmd.Output()
+		if err != nil {
+			fmt.Print(err)
+			os.Exit(1)
+		}
+		return string(out)
 	}
-	return string(out)
-
 }
