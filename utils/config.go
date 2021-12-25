@@ -12,3 +12,5 @@ var GitDir string = "--git-dir=" + DotmanDir
 var WorkTree string = "--work-tree=" + HomeDir
 var DotfileBackupDir = DotmanDir + "/" + DotFilesBackupDirName
 var EnableInteractiveCommand bool = false
+
+// .dotman-config

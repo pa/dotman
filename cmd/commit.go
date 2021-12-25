@@ -9,28 +9,28 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// diffCmd represents the diff command
-var diffCmd = &cobra.Command{
-	Use:                "diff",
-	Short:              "native git diff command",
-	Long:               `native git diff command`,
+// commitCmd represents the commit command
+var commitCmd = &cobra.Command{
+	Use:                "commit",
+	Short:              "native git commit command",
+	Long:               `native git commit command`,
 	DisableFlagParsing: true,
 	Run: func(cmd *cobra.Command, args []string) {
-		options := append([]string{utils.GitDir, utils.WorkTree, "diff"}, args...)
+		options := append([]string{utils.GitDir, utils.WorkTree, "commit"}, args...)
 		utils.GitCommandRun(options...)
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(diffCmd)
+	rootCmd.AddCommand(commitCmd)
 
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// diffCmd.PersistentFlags().String("foo", "", "A help for foo")
+	// commitCmd.PersistentFlags().String("foo", "", "A help for foo")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// diffCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// commitCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
