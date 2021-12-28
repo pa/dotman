@@ -12,8 +12,8 @@ import (
 // addCmd represents the add command
 var addCmd = &cobra.Command{
 	Use:                "add",
-	Short:              "native git add command",
-	Long:               `native git add command`,
+	Short:              "Native git add command",
+	Long:               `Native git add command`,
 	DisableFlagParsing: true,
 	Run: func(cmd *cobra.Command, args []string) {
 		options := append([]string{utils.GitDir, utils.WorkTree, "add"}, args...)

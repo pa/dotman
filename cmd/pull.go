@@ -12,8 +12,8 @@ import (
 // pullCmd represents the pull command
 var pullCmd = &cobra.Command{
 	Use:                "pull",
-	Short:              "native git pull command",
-	Long:               `native git pull command`,
+	Short:              "Native git pull command",
+	Long:               `Native git pull command`,
 	DisableFlagParsing: true,
 	Run: func(cmd *cobra.Command, args []string) {
 		options := append([]string{utils.GitDir, utils.WorkTree, "pull"}, args...)

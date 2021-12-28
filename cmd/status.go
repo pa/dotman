@@ -12,8 +12,8 @@ import (
 // statusCmd represents the status command
 var statusCmd = &cobra.Command{
 	Use:                "status",
-	Short:              "native git status command",
-	Long:               `native git status command`,
+	Short:              "Native git status command",
+	Long:               `Native git status command`,
 	DisableFlagParsing: true,
 	Run: func(cmd *cobra.Command, args []string) {
 		options := append([]string{utils.GitDir, utils.WorkTree, "status"}, args...)

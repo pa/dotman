@@ -12,8 +12,8 @@ import (
 // commitCmd represents the commit command
 var commitCmd = &cobra.Command{
 	Use:                "commit",
-	Short:              "native git commit command",
-	Long:               `native git commit command`,
+	Short:              "Native git commit command",
+	Long:               `Native git commit command`,
 	DisableFlagParsing: true,
 	Run: func(cmd *cobra.Command, args []string) {
 		options := append([]string{utils.GitDir, utils.WorkTree, "commit"}, args...)

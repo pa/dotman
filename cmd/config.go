@@ -8,8 +8,8 @@ import (
 // configCmd represents the config command
 var configCmd = &cobra.Command{
 	Use:                "config",
-	Short:              "native git config command",
-	Long:               `native git config command`,
+	Short:              "Native git config command",
+	Long:               `Native git config command`,
 	DisableFlagParsing: true,
 	Run: func(cmd *cobra.Command, args []string) {
 		options := append([]string{utils.GitDir, utils.WorkTree, "config"}, args...)

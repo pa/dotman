@@ -12,8 +12,8 @@ import (
 // stashCmd represents the stash command
 var stashCmd = &cobra.Command{
 	Use:                "stash",
-	Short:              "native git stash command",
-	Long:               `native git stash command`,
+	Short:              "Native git stash command",
+	Long:               `Native git stash command`,
 	DisableFlagParsing: true,
 	Run: func(cmd *cobra.Command, args []string) {
 		options := append([]string{utils.GitDir, utils.WorkTree, "stash"}, args...)

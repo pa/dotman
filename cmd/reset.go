@@ -12,8 +12,8 @@ import (
 // resetCmd represents the reset command
 var resetCmd = &cobra.Command{
 	Use:                "reset",
-	Short:              "native git reset command",
-	Long:               `native git reset command`,
+	Short:              "Native git reset command",
+	Long:               `Native git reset command`,
 	DisableFlagParsing: true,
 	Run: func(cmd *cobra.Command, args []string) {
 		options := append([]string{utils.GitDir, utils.WorkTree, "reset"}, args...)

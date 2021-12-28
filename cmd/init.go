@@ -14,8 +14,8 @@ import (
 // initCmd represents the init command
 var initCmd = &cobra.Command{
 	Use:   "init",
-	Short: "clones dotfiles repo and installs plugins that you specified in cofig file",
-	Long:  `clones dotfiles repo and installs plugins that you specified in cofig file.`,
+	Short: "Clones dotfiles repo and installs plugins that you specified in cofig file",
+	Long:  `Clones dotfiles repo and installs plugins that you specified in cofig file.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		Params := utils.PromptParams{
 			Label:    "git repo url",
@@ -76,7 +76,7 @@ var initCmd = &cobra.Command{
 		// backup existing dotfiles
 		if len(LsFilesArray) >= 0 {
 			for _, filePath := range LsFilesArray {
-				os.MkdirAll(utils.DotfileBackupDir+"/"+filepath.Dir(filePath), 0755)
+				os.MkdirAll(utils.DotfileBackupDir+"/"+filepath.Dir(filePath), os.ModePerm)
 				os.Rename(utils.HomeDir+"/"+filePath, utils.DotfileBackupDir+"/"+filePath)
 			}
 		}

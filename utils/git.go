@@ -31,14 +31,33 @@ func GitCommand(args ...string) (*exec.Cmd, error) {
 	return exec.Command(gitExe, args...), nil
 }
 
-func GitCommandRun(args ...string) {
+func GitCommandRun(args ...string) error {
 	gitCmd, gitCmdErr := GitCommand(args...)
 	if gitCmdErr != nil {
-		fmt.Print(gitCmdErr)
+		return gitCmdErr
 	}
 	// for interactive command line
 	gitCmd.Stdout = os.Stdout
 	gitCmd.Stdin = os.Stdin
 	gitCmd.Stderr = os.Stderr
-	_ = gitCmd.Run()
+	err := gitCmd.Run()
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func IsGitRepoDir(repoPath string) bool {
+	gitCmd, _ := GitCommand("rev-parse",
+		"-r",
+		"--is-inside-work-tree")
+
+	gitCmd.Dir = repoPath
+
+	_, err := gitCmd.Output()
+	if err != nil {
+		return false
+	}
+	return true
+
 }

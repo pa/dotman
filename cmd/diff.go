@@ -12,8 +12,8 @@ import (
 // diffCmd represents the diff command
 var diffCmd = &cobra.Command{
 	Use:                "diff",
-	Short:              "native git diff command",
-	Long:               `native git diff command`,
+	Short:              "Native git diff command",
+	Long:               `Native git diff command`,
 	DisableFlagParsing: true,
 	Run: func(cmd *cobra.Command, args []string) {
 		options := append([]string{utils.GitDir, utils.WorkTree, "diff"}, args...)
