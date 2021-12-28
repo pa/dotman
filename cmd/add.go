@@ -17,7 +17,7 @@ var addCmd = &cobra.Command{
 	DisableFlagParsing: true,
 	Run: func(cmd *cobra.Command, args []string) {
 		options := append([]string{utils.GitDir, utils.WorkTree, "add"}, args...)
-		utils.GitCommandRun(options...)
+		utils.GitCommand(true, "", options...)
 	},
 }
 

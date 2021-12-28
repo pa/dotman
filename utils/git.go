@@ -1,63 +1,50 @@
 package utils
 
 import (
-	"errors"
-	"fmt"
 	"os"
-	"os/exec"
 )
 
-type NotInstalled struct {
-	message string
-	error
-}
+func GitCommand(isInteractive bool, currentDir string, args ...string) ([]byte, error) {
 
-func (e *NotInstalled) Error() string {
-	return e.message
-}
+	var gitCmdOutput []byte
+	var gitCmdError error
 
-func GitCommand(args ...string) (*exec.Cmd, error) {
-	gitExe, err := exec.LookPath("git")
-	if err != nil {
-		if errors.Is(err, exec.ErrNotFound) {
-			programName := "git"
-			return nil, &NotInstalled{
-				message: fmt.Sprintf("unable to find git executable in PATH; please install %s before retrying", programName),
-				error:   err,
-			}
-		}
-		return nil, err
-	}
-	return exec.Command(gitExe, args...), nil
-}
-
-func GitCommandRun(args ...string) error {
-	gitCmd, gitCmdErr := GitCommand(args...)
+	gitCmd, gitCmdErr := RunCommand("git", args...)
 	if gitCmdErr != nil {
-		return gitCmdErr
+		return nil, gitCmdErr
 	}
-	// for interactive command line
-	gitCmd.Stdout = os.Stdout
-	gitCmd.Stdin = os.Stdin
-	gitCmd.Stderr = os.Stderr
-	err := gitCmd.Run()
-	if err != nil {
-		return err
+
+	if currentDir != "" {
+		gitCmd.Dir = currentDir
 	}
-	return nil
+
+	if isInteractive {
+		// for interactive command line
+		gitCmd.Stdout = os.Stdout
+		gitCmd.Stdin = os.Stdin
+		gitCmd.Stderr = os.Stderr
+		gitCmdError = gitCmd.Run()
+		if gitCmdError != nil {
+			return nil, gitCmdError
+		}
+	} else {
+		gitCmdOutput, gitCmdError = gitCmd.Output()
+		if gitCmdError != nil {
+			return gitCmdOutput, gitCmdError
+		}
+	}
+	return gitCmdOutput, gitCmdError
 }
 
 func IsGitRepoDir(repoPath string) bool {
-	gitCmd, _ := GitCommand("rev-parse",
+	_, err := GitCommand(false,
+		repoPath,
+		"rev-parse",
 		"-r",
-		"--is-inside-work-tree")
-
-	gitCmd.Dir = repoPath
-
-	_, err := gitCmd.Output()
+		"--is-inside-work-tree",
+	)
 	if err != nil {
 		return false
 	}
 	return true
-
 }

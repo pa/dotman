@@ -17,7 +17,7 @@ var stashCmd = &cobra.Command{
 	DisableFlagParsing: true,
 	Run: func(cmd *cobra.Command, args []string) {
 		options := append([]string{utils.GitDir, utils.WorkTree, "stash"}, args...)
-		utils.GitCommandRun(options...)
+		utils.GitCommand(true, "", options...)
 	},
 }
 

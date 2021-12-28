@@ -33,11 +33,13 @@ var updateExternalsCmd = &cobra.Command{
 			if externalsPaths != nil {
 				// clone externals repo
 				if utils.IsGitRepoDir(repoPath) {
-					utils.GitCommandRun(
+					utils.GitCommand(true,
+						repoPath,
 						"pull",
 					)
 				} else {
-					utils.GitCommandRun(
+					utils.GitCommand(true,
+						"",
 						"clone",
 						gitUrl,
 						repoPath,
@@ -52,18 +54,13 @@ var updateExternalsCmd = &cobra.Command{
 					files, err := ioutil.ReadDir(sourcePath)
 					if err != nil {
 						// Create target dir if not exists
-						_, dirErr := os.Stat(path.Dir(targetPath))
-						if dirErr != nil {
-							os.MkdirAll(path.Dir(targetPath), os.ModePerm)
-						}
+						utils.CreateDir(path.Dir(targetPath))
+
 						utils.CopyFile(sourcePath, targetPath)
 					} else {
 						for _, file := range files {
 							// Create target dir if not exists
-							_, dirErr := os.Stat(targetPath)
-							if dirErr != nil {
-								os.MkdirAll(targetPath, os.ModePerm)
-							}
+							utils.CreateDir(targetPath)
 
 							_, err := os.Stat(targetPath + "/" + file.Name())
 							if err == nil {
@@ -73,7 +70,6 @@ var updateExternalsCmd = &cobra.Command{
 								utils.CopyFile(sourcePath+"/"+file.Name(), targetPath+"/"+file.Name())
 
 							}
-
 						}
 					}
 				}
@@ -81,14 +77,16 @@ var updateExternalsCmd = &cobra.Command{
 				repoPath := utils.HomeDir + "/" + externalsData.Key().String() + "/" + gitRepoBaseName
 				// clone externals repo
 				if utils.IsGitRepoDir(repoPath) {
-					utils.GitCommandRun(
+					utils.GitCommand(true,
+						repoPath,
 						"pull",
 					)
 				} else {
-					utils.GitCommandRun(
+					utils.GitCommand(true,
+						"",
 						"clone",
 						gitUrl,
-						utils.HomeDir+"/"+externalsData.Key().String()+"/"+gitRepoBaseName,
+						repoPath,
 					)
 				}
 			}

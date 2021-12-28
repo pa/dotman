@@ -17,7 +17,7 @@ var statusCmd = &cobra.Command{
 	DisableFlagParsing: true,
 	Run: func(cmd *cobra.Command, args []string) {
 		options := append([]string{utils.GitDir, utils.WorkTree, "status"}, args...)
-		utils.GitCommandRun(options...)
+		utils.GitCommand(true, "", options...)
 	},
 }
 

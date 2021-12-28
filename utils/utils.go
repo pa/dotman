@@ -41,6 +41,15 @@ func CopyFile(src, dst string) (err error) {
 	return nil
 }
 
+type NotInstalled struct {
+	message string
+	error
+}
+
+func (e *NotInstalled) Error() string {
+	return e.message
+}
+
 func RunCommand(binary string, args ...string) (*exec.Cmd, error) {
 	cmdExe, err := exec.LookPath(binary)
 	if err != nil {

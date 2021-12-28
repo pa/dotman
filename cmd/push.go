@@ -20,11 +20,11 @@ var pushCmd = &cobra.Command{
 		isAutoCommit := viper.GetBool("autoCommit")
 		if isAutoCommit {
 			options := append([]string{utils.GitDir, utils.WorkTree, "commit", "-am", `"updated by dotman"`}, []string{}...)
-			utils.GitCommandRun(options...)
+			utils.GitCommand(true, "", options...)
 		}
 
 		options := append([]string{utils.GitDir, utils.WorkTree, "push"}, args...)
-		utils.GitCommandRun(options...)
+		utils.GitCommand(true, "", options...)
 	},
 }
 

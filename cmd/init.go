@@ -24,70 +24,84 @@ var initCmd = &cobra.Command{
 
 		DotFilesRepoUrl := utils.PromptGetInput(Params)
 
-		// Clone dotfiles bare repo
-		utils.GitCommandRun(utils.GitDir,
-			utils.WorkTree,
-			"clone",
-			"--bare",
-			"--no-checkout",
-			"--depth",
-			"1",
-			DotFilesRepoUrl,
-			utils.DotmanDir,
-		)
+		if !utils.IsGitRepoDir(utils.DotmanDir) {
+			// Clone dotfiles bare repo
+			utils.GitCommand(true,
+				"",
+				utils.GitDir,
+				utils.WorkTree,
+				"clone",
+				"--bare",
+				"--no-checkout",
+				"--depth",
+				"1",
+				DotFilesRepoUrl,
+				utils.DotmanDir,
+			)
 
-		// set git config username
-		utils.GitCommandRun(utils.GitDir,
-			utils.WorkTree,
-			"config",
-			"user.name",
-			utils.GitUserName,
-		)
+			// set git config username
+			utils.GitCommand(true,
+				"",
+				utils.GitDir,
+				utils.WorkTree,
+				"config",
+				"user.name",
+				utils.GitUserName,
+			)
 
-		// set showUntrackedFiles to no
-		utils.GitCommandRun(utils.GitDir,
-			utils.WorkTree,
-			"config",
-			"--local",
-			"status.showUntrackedFiles",
-			"no",
-		)
+			// set showUntrackedFiles to no
+			utils.GitCommand(true,
+				"",
+				utils.GitDir,
+				utils.WorkTree,
+				"config",
+				"--local",
+				"status.showUntrackedFiles",
+				"no",
+			)
 
-		// get branch name
-		DefaultBranchName, _ := gitconfig.Entire("init.defaultbranch")
+			// get branch name
+			DefaultBranchName, _ := gitconfig.Entire("init.defaultbranch")
 
-		// git list files in remote repo
-		gitCmd, _ := utils.GitCommand(utils.GitDir,
-			"ls-tree",
-			"-r",
-			DefaultBranchName,
-			"--name-only",
-		)
-		out, err := gitCmd.Output()
-		if err != nil {
-			fmt.Print(err)
-			os.Exit(1)
-		}
-		LsFiles := string(out)
-
-		// convert to Array
-		LsFilesArray := strings.Fields(LsFiles)
-
-		// backup existing dotfiles
-		if len(LsFilesArray) >= 0 {
-			for _, filePath := range LsFilesArray {
-				os.MkdirAll(utils.DotfileBackupDir+"/"+filepath.Dir(filePath), os.ModePerm)
-				os.Rename(utils.HomeDir+"/"+filePath, utils.DotfileBackupDir+"/"+filePath)
+			// git list files in remote repo
+			gitCmd, err := utils.GitCommand(false,
+				"",
+				utils.GitDir,
+				"ls-tree",
+				"-r",
+				DefaultBranchName,
+				"--name-only",
+			)
+			if err != nil {
+				fmt.Print(err)
+				os.Exit(1)
 			}
+
+			LsFiles := string(gitCmd)
+
+			// convert to Array
+			LsFilesArray := strings.Fields(LsFiles)
+
+			// backup existing dotfiles
+			if len(LsFilesArray) >= 0 {
+				for _, filePath := range LsFilesArray {
+					os.MkdirAll(utils.DotfileBackupDir+"/"+filepath.Dir(filePath), os.ModePerm)
+					os.Rename(utils.HomeDir+"/"+filePath, utils.DotfileBackupDir+"/"+filePath)
+				}
+			}
+
+			// git checkout dotfiles
+			utils.GitCommand(true,
+				"",
+				utils.GitDir,
+				utils.WorkTree,
+				"checkout",
+			)
+
+			fmt.Print("Successfully Initialized")
+		} else {
+			fmt.Print("Already Initialized")
 		}
-
-		// git checkout dotfiles
-		utils.GitCommandRun(utils.GitDir,
-			utils.WorkTree,
-			"checkout",
-		)
-
-		fmt.Print("Successfully Initialized")
 
 	},
 }
