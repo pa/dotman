@@ -8,8 +8,8 @@ import (
 // diffCmd represents the diff command
 var diffCmd = &cobra.Command{
 	Use:                "diff",
-	Short:              "Native git diff command",
-	Long:               `Native git diff command`,
+	Short:              "Show changes between commits, commit and working tree, etc",
+	Long:               `Show changes between commits, commit and working tree, etc`,
 	DisableFlagParsing: true,
 	Run: func(cmd *cobra.Command, args []string) {
 		options := append([]string{utils.GitDir, utils.WorkTree, "diff"}, args...)

@@ -9,8 +9,8 @@ import (
 // pushCmd represents the push command
 var pushCmd = &cobra.Command{
 	Use:                "push",
-	Short:              "Native git push command",
-	Long:               `Native git push command`,
+	Short:              "Update remote refs along with associated objects",
+	Long:               `Update remote refs along with associated objects`,
 	DisableFlagParsing: true,
 	Run: func(cmd *cobra.Command, args []string) {
 		isAutoCommit := viper.GetBool("autoCommit")

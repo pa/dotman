@@ -1,10 +1,10 @@
 package cmd
 
 import (
+	"fmt"
 	"io/ioutil"
 	"os"
 	"path"
-	"reflect"
 	"strings"
 
 	"github.com/pa/dotman/utils"
@@ -15,79 +15,116 @@ import (
 // updateExternalsCmd represents the updateExternals command
 var updateExternalsCmd = &cobra.Command{
 	Use:   "update-externals",
-	Short: "Downloads and updates git externals like plugins, dependencies...",
-	Long:  `Downloads and updates git externals like plugins, dependencies...`,
+	Short: "Downloads and updates git externals like plugins, etc",
+	Long:  `Downloads and updates git externals like plugins, etc`,
 	Run: func(cmd *cobra.Command, args []string) {
+		// issue with unmarshalling the yaml config https://github.com/spf13/viper/issues/338
+		// type configPathAttributes struct {
+		// 	url   string   `mapstructure:"url"`
+		// 	paths []string `mapstructure:"paths"`
+		// }
+
+		// type Externals struct {
+		// 	configPath map[string][]configPathAttributes
+		// }
+
+		// type Config struct {
+		// 	AutoCommit bool                   `mapstructure:"autoCommit"`
+		// 	Externals  map[string]interface{} `mapstructure:"externals"`
+		// }
+
+		// var config Config
+
+		// err := viper.Unmarshal(&config)
+		// if err != nil {
+		// 	fmt.Print("unable to decode into struct", err)
+		// }
 
 		// Create externals dir under dotman directory
 		utils.CreateDir(utils.ExternalsDir)
 
-		externalsData := reflect.ValueOf(viper.GetStringMap("externals")).MapRange()
+		externalsData := viper.GetStringMap("externals")
 
-		for externalsData.Next() {
-			gitUrl := viper.GetString("externals." + externalsData.Key().String() + ".url")
-			externalsPaths := viper.GetStringSlice("externals." + externalsData.Key().String() + ".paths")
-			gitRepoBaseName := strings.Split(path.Base(gitUrl), ".")[0]
-			repoPath := utils.ExternalsDir + "/" + gitRepoBaseName
+		for externalKey, externalValue := range externalsData {
+			for _, external := range externalValue.([]interface{}) {
+				// convert interface to map
+				external := external.(map[interface{}]interface{})
 
-			if externalsPaths != nil {
-				// clone externals repo
-				if utils.IsGitRepoDir(repoPath) {
-					utils.GitCommand(true,
-						repoPath,
-						"pull",
-					)
-				} else {
-					utils.GitCommand(true,
-						"",
-						"clone",
-						gitUrl,
-						repoPath,
-					)
-				}
+				gitUrl := external["url"].(string)
+				gitRepoBaseName := strings.Split(path.Base(gitUrl), ".")[0]
+				repoPath := utils.ExternalsDir + "/" + gitRepoBaseName
+				externalsPaths := external["paths"]
 
-				for _, externalsPath := range externalsPaths {
-					sourcePath := utils.ExternalsDir + "/" + gitRepoBaseName + "/" + strings.Split(externalsPath, " ")[0]
-					targetPath := utils.HomeDir + "/" + externalsData.Key().String() + "/" + strings.Split(externalsPath, " ")[1]
+				var isUpToDate []byte
 
-					// list files
-					files, err := ioutil.ReadDir(sourcePath)
-					if err != nil {
-						// Create target dir if not exists
-						utils.CreateDir(path.Dir(targetPath))
-
-						utils.CopyFile(sourcePath, targetPath)
+				if externalsPaths != nil {
+					// clone externals repo
+					if utils.IsGitRepoDir(repoPath) {
+						isUpToDate, _ = utils.GitCommand(false,
+							repoPath,
+							"pull",
+						)
 					} else {
-						for _, file := range files {
-							// Create target dir if not exists
-							utils.CreateDir(targetPath)
+						utils.GitCommand(true,
+							"",
+							"clone",
+							gitUrl,
+							repoPath,
+						)
+					}
 
-							_, err := os.Stat(targetPath + "/" + file.Name())
-							if err == nil {
-								os.Remove(targetPath + "/" + file.Name())
-								utils.CopyFile(sourcePath+"/"+file.Name(), targetPath+"/"+file.Name())
+					isUpToDate := utils.RemoveRunes(string(isUpToDate))
+
+					if isUpToDate != "Already up to date." {
+						for _, externalsPath := range externalsPaths.([]interface{}) {
+							sourcePath := utils.ExternalsDir + "/" + gitRepoBaseName + "/" + strings.Split(externalsPath.(string), " ")[0]
+							targetPath := utils.HomeDir + "/" + externalKey + "/" + strings.Split(externalsPath.(string), " ")[1]
+
+							// list files
+							files, err := ioutil.ReadDir(sourcePath)
+							if err != nil {
+								// Create target dir if not exists
+								utils.CreateDir(path.Dir(targetPath))
+
+								utils.CopyFile(sourcePath, targetPath)
 							} else {
-								utils.CopyFile(sourcePath+"/"+file.Name(), targetPath+"/"+file.Name())
+								for _, file := range files {
+									// Create target dir if not exists
+									utils.CreateDir(targetPath)
 
+									_, err := os.Stat(targetPath + "/" + file.Name())
+									if err == nil {
+										os.Remove(targetPath + "/" + file.Name())
+										utils.CopyFile(sourcePath+"/"+file.Name(), targetPath+"/"+file.Name())
+									} else {
+										utils.CopyFile(sourcePath+"/"+file.Name(), targetPath+"/"+file.Name())
+
+									}
+								}
 							}
 						}
+					} else {
+						fmt.Print(gitRepoBaseName, " - Already up to date.\n")
 					}
-				}
-			} else {
-				repoPath := utils.HomeDir + "/" + externalsData.Key().String() + "/" + gitRepoBaseName
-				// clone externals repo
-				if utils.IsGitRepoDir(repoPath) {
-					utils.GitCommand(true,
-						repoPath,
-						"pull",
-					)
+
 				} else {
-					utils.GitCommand(true,
-						"",
-						"clone",
-						gitUrl,
-						repoPath,
-					)
+					repoPath := utils.HomeDir + "/" + externalKey + "/" + gitRepoBaseName
+					// clone externals repo
+					if utils.IsGitRepoDir(repoPath) {
+						isUpToDate, _ = utils.GitCommand(false,
+							repoPath,
+							"pull",
+						)
+
+						fmt.Print(gitRepoBaseName, " - ", string(isUpToDate))
+					} else {
+						utils.GitCommand(true,
+							"",
+							"clone",
+							gitUrl,
+							repoPath,
+						)
+					}
 				}
 			}
 		}

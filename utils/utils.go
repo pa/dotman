@@ -6,6 +6,8 @@ import (
 	"os"
 	"os/exec"
 	"os/user"
+	"strings"
+	"unicode"
 )
 
 func GetHomeDir() string {
@@ -62,4 +64,14 @@ func RunCommand(binary string, args ...string) (*exec.Cmd, error) {
 		return nil, err
 	}
 	return exec.Command(cmdExe, args...), nil
+}
+
+func RemoveRunes(input string) string {
+	cleanString := strings.Map(func(r rune) rune {
+		if unicode.IsPrint(r) {
+			return r
+		}
+		return -1
+	}, input)
+	return cleanString
 }

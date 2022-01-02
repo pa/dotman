@@ -8,14 +8,13 @@ import (
 
 	"github.com/pa/dotman/utils"
 	"github.com/spf13/cobra"
-	"github.com/tcnksm/go-gitconfig"
 )
 
 // initCmd represents the init command
 var initCmd = &cobra.Command{
 	Use:   "init",
-	Short: "Clones dotfiles repo and installs plugins that you specified in cofig file",
-	Long:  `Clones dotfiles repo and installs plugins that you specified in cofig file.`,
+	Short: "Clones dotfiles repo from remote git repository",
+	Long:  `Clones dotfiles repo from remote git repository`,
 	Run: func(cmd *cobra.Command, args []string) {
 		Params := utils.PromptParams{
 			Label:    "git repo url",
@@ -61,7 +60,13 @@ var initCmd = &cobra.Command{
 			)
 
 			// get branch name
-			DefaultBranchName, _ := gitconfig.Entire("init.defaultbranch")
+			CurrentBranchName, _ := utils.GitCommand(false,
+				"",
+				utils.GitDir,
+				utils.WorkTree,
+				"branch",
+				"--show-current",
+			)
 
 			// git list files in remote repo
 			gitCmd, err := utils.GitCommand(false,
@@ -69,7 +74,7 @@ var initCmd = &cobra.Command{
 				utils.GitDir,
 				"ls-tree",
 				"-r",
-				DefaultBranchName,
+				utils.RemoveRunes(string(CurrentBranchName)),
 				"--name-only",
 			)
 			if err != nil {

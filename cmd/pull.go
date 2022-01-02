@@ -8,8 +8,8 @@ import (
 // pullCmd represents the pull command
 var pullCmd = &cobra.Command{
 	Use:                "pull",
-	Short:              "Native git pull command",
-	Long:               `Native git pull command`,
+	Short:              "Fetch from and merge with another repository or a local branch",
+	Long:               `Fetch from and merge with another repository or a local branch`,
 	DisableFlagParsing: true,
 	Run: func(cmd *cobra.Command, args []string) {
 		options := append([]string{utils.GitDir, utils.WorkTree, "pull"}, args...)

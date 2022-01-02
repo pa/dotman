@@ -8,8 +8,8 @@ import (
 // addCmd represents the add command
 var addCmd = &cobra.Command{
 	Use:                "add",
-	Short:              "Native git add command",
-	Long:               `Native git add command`,
+	Short:              "Add file contents to the index",
+	Long:               `Add file contents to the index`,
 	DisableFlagParsing: true,
 	Run: func(cmd *cobra.Command, args []string) {
 		options := append([]string{utils.GitDir, utils.WorkTree, "add"}, args...)
