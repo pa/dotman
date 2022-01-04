@@ -18,6 +18,7 @@ var updateExternalsCmd = &cobra.Command{
 	Short: "Downloads and updates git externals like plugins, etc",
 	Long:  `Downloads and updates git externals like plugins, etc`,
 	Run: func(cmd *cobra.Command, args []string) {
+		// TODO: if files get deleted in upstream
 		// issue with unmarshalling the yaml config https://github.com/spf13/viper/issues/338
 		// type configPathAttributes struct {
 		// 	url   string   `mapstructure:"url"`
@@ -60,10 +61,36 @@ var updateExternalsCmd = &cobra.Command{
 				if externalsPaths != nil {
 					// clone externals repo
 					if utils.IsGitRepoDir(repoPath) {
+						// Get current commit id
+						currentCommitID, _ := utils.GitCommand(false,
+							repoPath,
+							"rev-parse",
+							"HEAD",
+						)
+
 						isUpToDate, _ = utils.GitCommand(false,
 							repoPath,
 							"pull",
 						)
+
+						// Get files deleted between previous commit to latest commit
+						deletedFiles, _ := utils.GitCommand(false,
+							repoPath,
+							"show",
+							utils.RemoveRunes(string(currentCommitID))+"..HEAD",
+							"--diff-filter=D",
+							"--name-only",
+							"--no-commit-id",
+						)
+
+						deletedFilesList := strings.Fields(string(deletedFiles))
+
+						if len(deletedFilesList) >= 0 {
+							for _, file := range deletedFilesList {
+								os.Remove(utils.HomeDir + "/" + externalKey + "/" + file)
+							}
+						}
+
 					} else {
 						utils.GitCommand(true,
 							"",

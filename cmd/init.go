@@ -82,14 +82,11 @@ var initCmd = &cobra.Command{
 				os.Exit(1)
 			}
 
-			LsFiles := string(gitCmd)
-
-			// convert to Array
-			LsFilesArray := strings.Fields(LsFiles)
+			LsFiles := strings.Fields(string(gitCmd))
 
 			// backup existing dotfiles
-			if len(LsFilesArray) >= 0 {
-				for _, filePath := range LsFilesArray {
+			if len(LsFiles) >= 0 {
+				for _, filePath := range LsFiles {
 					os.MkdirAll(utils.DotfileBackupDir+"/"+filepath.Dir(filePath), os.ModePerm)
 					os.Rename(utils.HomeDir+"/"+filePath, utils.DotfileBackupDir+"/"+filePath)
 				}
