@@ -2,6 +2,7 @@ package utils
 
 import (
 	"os"
+	"strings"
 )
 
 func GitCommand(isInteractive bool, currentDir string, args ...string) ([]byte, error) {
@@ -47,4 +48,39 @@ func IsGitRepoDir(repoPath string) bool {
 		return false
 	}
 	return true
+}
+
+// Check if repo already up to date
+func IsRepoUpToDate(repoPath string) bool {
+	isUpToDate, _ := GitCommand(false,
+		repoPath,
+		"diff",
+		"origin/HEAD",
+		"HEAD",
+		"--name-only",
+	)
+
+	if len(isUpToDate) > 0 {
+		return false
+	}
+	return true
+}
+
+func GetDeletedOrModifiedFiles(repoPath string, currentCommitID []byte, isDeletedFiles bool) []string {
+	var diffFilter string
+	if isDeletedFiles {
+		diffFilter = "D"
+	} else {
+		diffFilter = "AM"
+	}
+
+	files, _ := GitCommand(false,
+		repoPath,
+		"show",
+		RemoveRunes(string(currentCommitID))+"..HEAD",
+		"--diff-filter="+diffFilter,
+		"--name-only",
+		"--no-commit-id",
+	)
+	return strings.Fields(string(files))
 }

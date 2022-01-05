@@ -56,41 +56,29 @@ var updateExternalsCmd = &cobra.Command{
 				repoPath := utils.ExternalsDir + "/" + gitRepoBaseName
 				externalsPaths := external["paths"]
 
-				var isUpToDate []byte
+				var isUpToDate bool = false
+				var isCloned bool = false
+				var currentCommitID []byte
+				var deletedFiles []string
+				var addedAndModifiedFiles []string
 
 				if externalsPaths != nil {
 					// clone externals repo
 					if utils.IsGitRepoDir(repoPath) {
 						// Get current commit id
-						currentCommitID, _ := utils.GitCommand(false,
+						currentCommitID, _ = utils.GitCommand(false,
 							repoPath,
 							"rev-parse",
 							"HEAD",
 						)
 
-						isUpToDate, _ = utils.GitCommand(false,
+						// Download only repo objects and refs
+						utils.GitCommand(false,
 							repoPath,
-							"pull",
+							"fetch",
 						)
 
-						// Get files deleted between previous commit to latest commit
-						deletedFiles, _ := utils.GitCommand(false,
-							repoPath,
-							"show",
-							utils.RemoveRunes(string(currentCommitID))+"..HEAD",
-							"--diff-filter=D",
-							"--name-only",
-							"--no-commit-id",
-						)
-
-						deletedFilesList := strings.Fields(string(deletedFiles))
-
-						if len(deletedFilesList) >= 0 {
-							for _, file := range deletedFilesList {
-								os.Remove(utils.HomeDir + "/" + externalKey + "/" + file)
-							}
-						}
-
+						isUpToDate = utils.IsRepoUpToDate(repoPath)
 					} else {
 						utils.GitCommand(true,
 							"",
@@ -98,14 +86,32 @@ var updateExternalsCmd = &cobra.Command{
 							gitUrl,
 							repoPath,
 						)
+						isCloned = true
 					}
 
-					isUpToDate := utils.RemoveRunes(string(isUpToDate))
+					if !isUpToDate {
+						// Merge fetched objects and refs
+						utils.GitCommand(false,
+							repoPath,
+							"merge",
+						)
 
-					if isUpToDate != "Already up to date." {
+						// Get files deleted between previous commit to latest commit
+						deletedFiles = utils.GetDeletedOrModifiedFiles(repoPath, currentCommitID, true)
+						if len(deletedFiles) > 0 {
+							for _, file := range deletedFiles {
+								os.Remove(utils.HomeDir + "/" + externalKey + "/" + file)
+							}
+						}
+
+						// Get files added and modified files between previous commit until latest commit
+						addedAndModifiedFiles = utils.GetDeletedOrModifiedFiles(repoPath, currentCommitID, false)
+
 						for _, externalsPath := range externalsPaths.([]interface{}) {
-							sourcePath := utils.ExternalsDir + "/" + gitRepoBaseName + "/" + strings.Split(externalsPath.(string), " ")[0]
-							targetPath := utils.HomeDir + "/" + externalKey + "/" + strings.Split(externalsPath.(string), " ")[1]
+							source := strings.Split(externalsPath.(string), " ")[0]
+							target := strings.Split(externalsPath.(string), " ")[1]
+							sourcePath := utils.ExternalsDir + "/" + gitRepoBaseName + "/" + source
+							targetPath := utils.HomeDir + "/" + externalKey + "/" + target
 
 							// list files
 							files, err := ioutil.ReadDir(sourcePath)
@@ -113,7 +119,10 @@ var updateExternalsCmd = &cobra.Command{
 								// Create target dir if not exists
 								utils.CreateDir(path.Dir(targetPath))
 
-								utils.CopyFile(sourcePath, targetPath)
+								// Only copy updated files
+								if utils.Contains(addedAndModifiedFiles, source) || isCloned {
+									utils.CopyFile(sourcePath, targetPath)
+								}
 							} else {
 								for _, file := range files {
 									// Create target dir if not exists
@@ -121,11 +130,16 @@ var updateExternalsCmd = &cobra.Command{
 
 									_, err := os.Stat(targetPath + "/" + file.Name())
 									if err == nil {
-										os.Remove(targetPath + "/" + file.Name())
-										utils.CopyFile(sourcePath+"/"+file.Name(), targetPath+"/"+file.Name())
+										// Only copy updated files
+										if utils.Contains(addedAndModifiedFiles, source+"/"+file.Name()) || isCloned {
+											os.Remove(targetPath + "/" + file.Name())
+											utils.CopyFile(sourcePath+"/"+file.Name(), targetPath+"/"+file.Name())
+										}
 									} else {
-										utils.CopyFile(sourcePath+"/"+file.Name(), targetPath+"/"+file.Name())
-
+										// Only copy updated files
+										if utils.Contains(addedAndModifiedFiles, source+"/"+file.Name()) || isCloned {
+											utils.CopyFile(sourcePath+"/"+file.Name(), targetPath+"/"+file.Name())
+										}
 									}
 								}
 							}
@@ -138,12 +152,12 @@ var updateExternalsCmd = &cobra.Command{
 					repoPath := utils.HomeDir + "/" + externalKey + "/" + gitRepoBaseName
 					// clone externals repo
 					if utils.IsGitRepoDir(repoPath) {
-						isUpToDate, _ = utils.GitCommand(false,
+						gitCmdOutput, _ := utils.GitCommand(false,
 							repoPath,
 							"pull",
 						)
 
-						fmt.Print(gitRepoBaseName, " - ", string(isUpToDate))
+						fmt.Print(gitRepoBaseName, " - ", string(gitCmdOutput))
 					} else {
 						utils.GitCommand(true,
 							"",
