@@ -104,7 +104,6 @@ var initCmd = &cobra.Command{
 		} else {
 			fmt.Print("Already Initialized")
 		}
-
 	},
 }
 
