@@ -1,5 +1,6 @@
 ![GitHub Release](https://img.shields.io/github/v/release/pa/dotman?style=for-the-badge)
 ![Release with goreleaser](https://img.shields.io/github/workflow/status/pa/dotman/Release%20with%20goreleaser?style=for-the-badge)
+![Go Version](https://img.shields.io/github/go-mod/go-version/pa/dotman?style=for-the-badge)
 
 # dotman - dot(files) man(ager)
 
