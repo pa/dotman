@@ -1,5 +1,5 @@
-[![GitHub Release](https://img.shields.io/github/release/pa/dotman.svg)](https://github.com/pa/dotman/releases)
-![Release with goreleaser](https://github.com/pa/dotman/workflows/Release%20with%20goreleaser/badge.svg)
+![GitHub Release](https://img.shields.io/github/v/release/pa/dotman?style=for-the-badge)
+![Release with goreleaser](https://img.shields.io/github/workflow/status/pa/dotman/Release%20with%20goreleaser?style=for-the-badge)
 
 # dotman - dot(files) man(ager)
 
