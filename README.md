@@ -19,7 +19,7 @@ Just a binary for now, so go to the [release page](https://github.com/pa/dotman/
 ## Demo
 A quick demo of the tool,
 
-[![dotman demo video](assets/dotman-demo.gif)](assets/dotman-demo.gif "dotman demo video")
+https://user-images.githubusercontent.com/44371915/149934976-4dda052b-81b3-42ad-9ad7-e406c4a3af66.mov
 
 ## Configuration File
 Create a config file named `.dotman-config.<suported extention>` under your `$HOME` directory. The dotman supports various config file formats JSON, TOML and YAML.
