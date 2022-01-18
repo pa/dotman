@@ -1,12 +1,12 @@
-![GitHub Release](https://img.shields.io/github/v/release/pa/dotman?label=dotman%20release&logo=GitHub&style=for-the-badge)
 ![Release with goreleaser](https://img.shields.io/github/workflow/status/pa/dotman/Release%20with%20goreleaser?label=Release%20with%20goreleaser&logo=GitHub&style=for-the-badge)
+![GitHub Release](https://img.shields.io/github/v/release/pa/dotman?label=dotman%20release&logo=GitHub&style=for-the-badge)
 ![Go Version](https://img.shields.io/github/go-mod/go-version/pa/dotman?label=go%20version&logo=go&style=for-the-badge)
 
 # dotman - dot(files) man(ager)
 
-dotman is a [go](https://go.dev/) based simple and light weight tool for managing [dotfiles](https://en.wikipedia.org/wiki/Hidden_file_and_hidden_directory). This tool uses a [bare Git repository](https://www.atlassian.com/git/tutorials/dotfiles) that means your `$HOME` will be your git work tree. Also it offers a plugin manager with rules to copy files from source git repo and even directory which most of the tools out there won't support.
+dotman is a [go](https://go.dev/) based simple and light weight tool for managing [dotfiles](https://en.wikipedia.org/wiki/Hidden_file_and_hidden_directory). This tool uses a [bare Git repository](https://www.atlassian.com/git/tutorials/dotfiles) that means your `$HOME` will be your git work tree. Also, it offers a plugin manager with rules to copy files from source git repo and even directory which most of the tools out there wouldn't support.
 
-I named this tool after I got inspired by [Bhupesh's](https://github.com/Bhupesh-V) project [dotman](https://github.com/Bhupesh-V/dotman)
+I had been inspired by [Bhupesh's](https://github.com/Bhupesh-V) project [dotman](https://github.com/Bhupesh-V/dotman) after which I have named this tool.
 
 ## Requirements
 - [Git](https://git-scm.com/) executable insatlled on your machine
@@ -14,7 +14,7 @@ I named this tool after I got inspired by [Bhupesh's](https://github.com/Bhupesh
 
 ## Installation
 
-Just a binary for now, so go to the [release page](https://github.com/pa/dotman/releases), find the version you want and download the archive. Unpack it and put the binary to somewhere you want (on UNIX-y systems, /usr/local/bin or the like). 
+Just a binary for now, so go to the [release page](https://github.com/pa/dotman/releases), find the version you want and download the archive. Unpack it and put the binary to somewhere you want (on UNIX-y systems, /usr/local/bin or the like). Make sure to turn on the executable bits if you are using custom location.
 
 ## Demo
 A quick demo of the tool,
@@ -22,7 +22,7 @@ A quick demo of the tool,
 [![dotman demo video](assets/dotman-demo.gif)](assets/dotman-demo.gif "dotman demo video")
 
 ## Configuration File
-Create a config file named `.dotman-config.<suported extention>` under your `$HOME` directory. dotman supports various file extentions JSON, TOML and YAML. 
+Create a config file named `.dotman-config.<suported extention>` under your `$HOME` directory. The dotman supports various config file formats JSON, TOML and YAML.
 
 .dotman-config.yaml
 ```
@@ -34,7 +34,7 @@ externals:
             - <sourceDirFromGitRepo> <targetDir>
 ```
 
-below is a example of my config
+below is a example of dotman config
 
 ```
 autoCommit: true
@@ -49,6 +49,8 @@ externals:
       paths:
         - conf.d conf.d
         - functions functions
+  .vim/pack/plugins/start:
+    - url: https://github.com/preservim/nerdtree.git
 ```
 
 ## Usage
@@ -99,6 +101,9 @@ Changes not staged for commit:
 
 Untracked files not listed (use -u option to show untracked files)
 
+# dotman push
+❯ dotman push -u origin <branch name>
+
 # dotman update-externals
 ❯ dotman update-externals
 Using config file: /Users/pa/.dotman-config.yaml
@@ -120,6 +125,7 @@ Resolving deltas: 100% (313/313), done.
 
 
 ## TODO
+- Add more git native commands
 - Write unit tests
 - Add GitHub action to build and test
 - Release package to various distributions
