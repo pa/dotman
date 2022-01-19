@@ -25,18 +25,18 @@ https://user-images.githubusercontent.com/44371915/149934976-4dda052b-81b3-42ad-
 Create a config file named `.dotman-config.<suported extention>` under your `$HOME` directory. The dotman supports various config file formats JSON, TOML and YAML.
 
 .dotman-config.yaml
-```
+```yaml
 autoCommit: <boolean>
 externals:
-    <parentPath>:
-        - url: <git url>
+    <parent path>:
+        - url: <git repo url>
           paths:
-            - <sourceDirFromGitRepo> <targetDir>
+            - <source path> <target path>  # can be either directory or file
 ```
 
 below is a example of dotman config
 
-```
+```yaml
 autoCommit: true
 externals:
   .config/fish:
@@ -73,10 +73,18 @@ Available Commands:
   stash            Stash away changes
   status           Show the working tree status
   update-externals Downloads and updates git externals like plugins, etc
-  ```
+```
+
+### Generate completion script
+
+you can generate completion script by using below command.
+
+```bash
+dotman completion [bash|zsh|fish]
+```
 
 ## Example
-```
+```bash
 # dotman init
 ❯ dotman init
 Using config file: /Users/pa/.dotman-config.yaml
@@ -123,6 +131,9 @@ Receiving objects: 100% (582/582), 92.20 KiB | 1.74 MiB/s, done.
 Resolving deltas: 100% (313/313), done.
 ```
 
+## Tips
+
+If you want to use README in your dotfiles repo and don't want to store it in $HOME directly, then go ahead and create a `README.md` file under directory `.github` in your `$HOME` path.
 
 ## TODO
 - Add more git native commands

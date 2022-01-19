@@ -9,7 +9,7 @@ import (
 
 // completionCmd represents the completion command
 var completionCmd = &cobra.Command{
-	Use:   "completion [bash|zsh|fish|powershell]",
+	Use:   "completion [bash|zsh|fish]",
 	Short: "Generate completion script",
 	Long: fmt.Sprintf(`
 Generate shell completion scripts for dotman commands.
