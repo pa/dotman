@@ -10,7 +10,7 @@ I had been inspired by [Bhupesh's](https://github.com/Bhupesh-V) project [dotman
 
 ## Requirements
 - [Git](https://git-scm.com/) executable insatlled on your machine
-- A Git repo, where you version control your dotfiles
+- A Git repo, where you version control your dotfiles. Create one from [here](https://github.com/new) if you want.
 
 ## Installation
 
@@ -22,7 +22,7 @@ A quick demo of the tool,
 https://user-images.githubusercontent.com/44371915/149934976-4dda052b-81b3-42ad-9ad7-e406c4a3af66.mov
 
 ## Configuration File
-Create a config file named `.dotman-config.<suported extention>` under your `$HOME` directory. The dotman supports various config file formats JSON, TOML and YAML.
+Create a config file named `.dotman-config.<supported extention>` under your `$HOME` directory. The dotman supports various config file formats JSON, TOML and YAML.
 
 .dotman-config.yaml
 ```yaml
@@ -32,6 +32,8 @@ externals:
         - url: <git repo url>
           paths:
             - <source path> <target path>  # can be either directory or file
+            # soure path - directory or file path from git repo dir
+            # target path - target directory or file path
 ```
 
 below is a example of dotman config
@@ -133,10 +135,11 @@ Resolving deltas: 100% (313/313), done.
 
 ## Tips
 
-If you want to use README in your dotfiles repo and don't want to store it in $HOME directly, then go ahead and create a `README.md` file under directory `.github` in your `$HOME` path.
+If you want to use README in your dotfiles repo and don't want to store it in `$HOME` directly, then go ahead and create a `README.md` file under directory `.github` in your `$HOME` path.
 
 ## TODO
 - Add more git native commands
 - Write unit tests
 - Add GitHub action to build and test
 - Release package to various distributions
+- Add support for Windows
