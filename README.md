@@ -14,7 +14,14 @@ I had been inspired by [Bhupesh's](https://github.com/Bhupesh-V) project [dotman
 
 ## Installation
 
-Just a binary for now, so go to the [release page](https://github.com/pa/dotman/releases), find the version you want and download the archive. Unpack it and put the binary to somewhere you want (on UNIX-y systems, /usr/local/bin or the like). Make sure to turn on the executable bits if you are using custom location.
+### via Go
+```bash
+go install github.com/pa/dotman@latest
+# you can also install specific verison instead of latest
+```
+
+### via Binary
+Go to the [release page](https://github.com/pa/dotman/releases), find the version you want and download the archive. Unpack it and put the binary to somewhere you want (on UNIX-y systems, /usr/local/bin or the like). Make sure to turn on the executable bits if you are using custom location.
 
 ## Demo
 A quick demo of the tool,
