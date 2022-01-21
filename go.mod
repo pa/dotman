@@ -8,8 +8,6 @@ require (
 	github.com/spf13/viper v1.10.1
 )
 
-replace github.com/pa/dotman/utils => ./utils
-
 require (
 	github.com/chzyer/readline v0.0.0-20180603132655-2972be24d48e // indirect
 	github.com/fsnotify/fsnotify v1.5.1 // indirect
@@ -27,5 +25,4 @@ require (
 	golang.org/x/text v0.3.7 // indirect
 	gopkg.in/ini.v1 v1.66.2 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
-	github.com/pa/dotman v0.1.0
 )
